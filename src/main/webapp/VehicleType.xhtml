@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Tipos de Vehículos</title>
+</h:head>
+<h:body>
+
+	<h:form id="frmVT">
+	
+	<p:growl id="messages" showDetail="true"></p:growl>
+		<p:panel header="Mantenimiento por tipo de vehículo">
+			
+			<p:commandButton value="Nuevo registro" icon="pi pi-check" update="frmVT:datosVehicleT" oncomplete="PF('vehicleTDialog').show()" style="margin-right: .5rem"></p:commandButton>
+		<br></br>
+				<h:panelGrid id="pnlVehiculoT">
+					<p:dataTable id="vehicleType" var="vehicleT" paginator="true" paginatorPosition="bottom" rows="5" value="#{vehicleTypeView.lstVehicleType}">
+						
+						<p:column headerText="ID">
+							<h:outputText value="#{vehicleT.idVehicleType}" />
+						</p:column>
+						<p:column headerText="Tipo de vehiculo">
+							<h:outputText value="#{vehicleT.vehicleType}" />
+						</p:column>
+						<p:column headerText="Precio estacionamiento">
+							<h:outputText value="#{vehicleT.fkRateHour.priceHour}" />
+						</p:column>
+
+						<p:column>
+						
+						<p:commandButton icon="pi pi-pencil" update="frmVT:datosVehicleTActualiza"	oncomplete="PF('vehicleTDialogActualiza').show()" styleClass="edit-button rounded-button">
+							<f:setPropertyActionListener value="#{vehicleT}" target="#{vehicleTypeView.selectedVehicleT}" />
+							<f:setPropertyActionListener value="#{vehicleT.fkRateHour.idRateHour}" target="#{vehicleTypeView.variableVT2}" />
+					
+
+						</p:commandButton>
+						
+						<p:commandButton class="ui-button-raised ui-button-danger rounded-button" style="margin-left:10px" icon="pi pi-trash" process="@this" oncomplete="PF('deletevehicleTDialog').show()">
+								<f:setPropertyActionListener value="#{vehicleT}" target="#{vehicleTypeView.selectedVehicleT}" />
+							</p:commandButton>
+							
+						</p:column>	
+
+					</p:dataTable>
+				</h:panelGrid>
+
+			
+
+		</p:panel>
+		
+		<p:dialog header="Nuevo tipo de vehiculo" showEffect="fade" modal="true" widgetVar="vehicleTDialog" responsive="true">
+
+			<h:panelGrid id="datosVehicleT" columns="2">
+				
+				<p:outputLabel value="Tipo de vehiculo: " />
+					<p:inputText value="#{vehicleTypeView.vehicleType}" />
+				
+				<p:outputLabel value="Tarifa a asignar: " />
+					<p:selectOneMenu id="optionMenu" value="#{vehicleTypeView.variableVT}">
+						<f:selectItem itemLabel="Seleccionar precio" itemValue=""/>
+						<f:selectItems var="seleccion" value="#{rateHourView.lstRate}"
+							itemLabel="#{seleccion.priceHour}"
+							itemValue="#{seleccion.idRateHour}" />
+
+					</p:selectOneMenu>
+				
+			</h:panelGrid>
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmVT:datosVehicleT, vehicleType" actionListener="#{vehicleTypeView.saveVehicleType}" >
+
+				</p:commandButton>				
+				<p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('vehicleTDialog').hide()" class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+
+		<p:dialog header="Actualiza Tarifa" showEffect="fade" modal="true" widgetVar="vehicleTDialogActualiza" responsive="true">
+
+			<h:panelGrid id="datosVehicleTActualiza" columns="2">
+				
+								
+				<p:outputLabel value="Tipo de vehiculo: " />
+				<p:inputText value="#{vehicleTypeView.selectedVehicleT.vehicleType}" />
+				
+					<p:outputLabel value="Tarifa a asignar: " />
+
+					<p:selectOneMenu id="optionUpdate" value="#{vehicleTypeView.variableVT2}">
+						<f:selectItem itemLabel="Seleccionar precio" itemValue="" />
+						<f:selectItems var="seleccion" value="#{rateHourView.lstRate}"
+						
+							itemLabel="#{seleccion.priceHour}"
+							itemValue="#{seleccion.idRateHour}" />
+
+					</p:selectOneMenu>
+							
+
+			</h:panelGrid>
+
+			
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmVT:datosVehicleTActualiza, frmVT:vehicleType" actionListener="#{vehicleTypeView.updateVehicleType}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('vehicleTDialogActualiza').hide()"	class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+		
+		
+		
+			
+		<p:confirmDialog widgetVar="deletevehicleTDialog" showEffect="fade"	width="300" message="Desea eliminar el registro?"	header="Confirmación" severity="warn">
+			<p:commandButton value="Aceptar" icon="pi pi-check"	actionListener="#{vehicleTypeView.deleteVehicleType}" process="@this"	oncomplete="PF('deletevehicleTDialog').hide()" />
+			<p:commandButton value="Cancelar" type="button"	styleClass="ui-button-secondary" icon="pi pi-times"	onclick="PF('deletevehicleTDialog').hide()" />
+		</p:confirmDialog>
+
+		
+		
+	</h:form>
+
+</h:body>
+</html>

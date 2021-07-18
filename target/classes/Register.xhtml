@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Registro de ingreso y salida</title>
+</h:head>
+<h:body>
+	<h:form id="frmRegistros">
+		<p:growl id="messages" showDetail="true"></p:growl>
+		<p:panel header="Registro de Estacionamiento">
+			<p:commandButton value="Agregar Registro" icon="pi pi-check" oncomplete="PF('registerDialog').show()" style="margin-right: .5rem"></p:commandButton>
+			
+			<br></br>
+			<h:panelGrid id="pnlRegisters">
+				<p:dataTable id="allRegisters" var="reg" paginator="true"
+					paginatorPosition="bottom" rows="5"
+					value="#{registerParkingView.lstRegister}">
+
+					<p:column headerText="Id registro">
+						<h:outputText value="#{reg.idRegisterParking}" />
+					</p:column>
+
+					<p:column headerText="Placa">
+						<h:outputText value="#{reg.fkVehicle.number}" />
+															
+					</p:column>
+
+					
+					<p:column headerText="Hora de ingreso">
+						<h:outputText value="#{reg.timeStart}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Hora de salida">
+						<h:outputText value="#{reg.timeEnd}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+					<p:commandButton icon="pi pi-pencil" update="frmRegistros:allRegisters" action="#{registerParkingView.updateRegister}">
+						<f:setPropertyActionListener value="#{reg}" target="#{registerParkingView.selectedRegister}" />
+
+					</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+		</p:panel>
+		
+		
+		<p:dialog header="Nuevo registro" showEffect="fade" modal="true" widgetVar="registerDialog" responsive="true">
+
+			<h:panelGrid id="datosRegistro" columns="4">
+				
+									
+						
+						<p:outputLabel value="Tipo de Vehiculo: " />
+						<p:selectOneMenu id="option"
+							value="#{registerParkingView.idVehicleType}">
+							<f:selectItem itemLabel="Seleccionar Tipo" itemValue="" />
+							<f:selectItems var="seleccion"
+								value="#{vehicleTypeView.lstVehicleType}"
+								itemLabel="#{seleccion.vehicleType}"
+								itemValue="#{seleccion.idVehicleType}" />
+
+						</p:selectOneMenu>
+						
+						<p:outputLabel value="Placa: " />
+						<p:inputText value="#{registerParkingView.number}" />
+						<p:outputLabel value="Marca: " />
+						<p:inputText value="#{registerParkingView.brand}" />
+						<p:outputLabel value="Color: " />
+						<p:inputText value="#{registerParkingView.color}" />
+						
+						<p:outputLabel value="Asignar espacio: " />
+						<p:selectOneMenu id="optionParking"
+							value="#{registerParkingView.idSlots}">
+							<f:selectItem itemLabel="Seleccionar Espacio" itemValue="" />
+							<f:selectItems var="seleccionS"
+								value="#{slotsView.lstSlots}"
+								itemLabel="#{seleccionS.nameSLot}"
+								itemValue="#{seleccionS.idSlot}" />
+						</p:selectOneMenu>
+
+			</h:panelGrid>
+
+
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmRegistros:datosRegistro, allRegisters" actionListener="#{registerParkingView.saveRegister}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times"
+					onclick="PF('registerDialog').hide()" class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+			
+			
+
+			
+
+		
+	</h:form>
+
+</h:body>
+</html>

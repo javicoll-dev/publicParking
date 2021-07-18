@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Tarifario Estacionamiento</title>
+</h:head>
+<h:body>
+
+	<h:form id="frmRates">
+				
+		<p:growl id="messages" showDetail="true"></p:growl>
+		<p:panel header="Mantenimiento de tarifas">
+		
+		<p:commandButton value="Nuevo Registro" icon="pi pi-check" oncomplete="PF('rateDialog').show()" style="margin-right: .5rem"></p:commandButton>
+	
+		
+		<br></br>
+			<h:panelGrid id="pnlTabla">
+				<p:dataTable id="rates" var="rate" paginator="true" paginatorPosition="bottom" rows="5" value="#{rateHourView.lstRate}">
+
+					<p:column headerText="ID">
+						<h:outputText value="#{rate.idRateHour}" />
+					</p:column>
+					
+					<p:column headerText="Precio">
+						<h:outputText value="#{rate.priceHour}" />
+					</p:column>
+					
+					
+					<p:column headerText="Fecha tarifa">
+						<h:outputText value="#{rate.daterateHour}" > 
+							<f:convertDateTime pattern="MM-dd-yyyy" />
+						
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+
+						<p:commandButton icon="pi pi-pencil" update="frmRates:datosTarifaActualiza"	oncomplete="PF('rateDialogActualiza').show()" styleClass="edit-button rounded-button">
+							<f:setPropertyActionListener value="#{rate}" target="#{rateHourView.selectedRate}" />
+
+						</p:commandButton>
+
+						
+
+						<p:commandButton class="ui-button-raised ui-button-danger rounded-button" style="margin-left:10px" icon="pi pi-trash" process="@this" oncomplete="PF('deleteRateDialog').show()">
+							<f:setPropertyActionListener value="#{rate}"	target="#{rateHourView.selectedRate}" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+
+		</p:panel>
+
+		<p:dialog header="Nueva Tarifa" showEffect="fade" modal="true" widgetVar="rateDialog" responsive="true">
+
+			<h:panelGrid id="datosTarifa" columns="2">
+				
+				<p:outputLabel value="Precio estacionamiento: " />
+				<p:inputText value="#{rateHourView.priceHour}" />
+				<p:outputLabel value="Fecha: " />
+				<p:datePicker id="button" value="#{rateHourView.daterateHour}" 	showIcon="true" />
+
+			</h:panelGrid>
+
+
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmRates:datosTarifa" actionListener="#{rateHourView.saveRate}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times"
+					onclick="PF('rateDialog').hide()" class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+
+
+		<p:dialog header="Actualiza Tarifa" showEffect="fade" modal="true"
+			widgetVar="rateDialogActualiza" responsive="true">
+
+			<h:panelGrid id="datosTarifaActualiza" columns="2">
+				
+				<p:outputLabel value="Precio estacionamiento: " />
+				<p:inputText value="#{rateHourView.selectedRate.priceHour}" />
+				<p:outputLabel value="Fecha: " />
+				<p:datePicker id="buttonActualiza" value="#{rateHourView.selectedRate.daterateHour}" showIcon="true" />
+
+			</h:panelGrid>
+
+
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmRates:datosTarifaActualiza" actionListener="#{rateHourView.saveRate}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('rateDialogActualiza').hide()"	class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+
+
+		<p:confirmDialog widgetVar="deleteRateDialog" showEffect="fade"	width="300" message="Desea eliminar el registro?"	header="Confirmación" severity="warn">
+			<p:commandButton value="Aceptar" icon="pi pi-check"	actionListener="#{rateHourView.deleteRate}" process="@this"	oncomplete="PF('deleteRateDialog').hide()" />
+			<p:commandButton value="Cancelar" type="button"	styleClass="ui-button-secondary" icon="pi pi-times"	onclick="PF('deleteRateDialog').hide()" />
+		</p:confirmDialog>
+
+
+		<p:confirmDialog global="true" showEffect="fade" width="300" />
+
+
+	</h:form>
+</h:body>
+</html>

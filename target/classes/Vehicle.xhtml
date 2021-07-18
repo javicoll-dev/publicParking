@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Lista de vehiculos</title>
+</h:head>
+<h:body>
+	<h:form>
+		<p:panel header="Lista de Vehículos registrados en el estacionamiento">
+			<div>
+				<p:panel>
+					<p:commandButton value="Actualizar" icon="pi pi-refresh" update="" actionListener="#{vehicleView.updateTable}" ></p:commandButton>
+				</p:panel>
+			</div>			
+			<p:dataGrid value= "Datos">
+				<p:dataTable id="vehicles" var="vehi" paginator="true" paginatorPosition="bottom"
+					rows="5"
+					value="#{vehicleView.lstVehicle}" >
+					<p:column headerText="idVehiculo">
+						<h:outputText value="#{vehi.idVehicle}" />
+					</p:column>
+					<p:column headerText="Placa">
+						<h:outputText value="#{vehi.number}" />
+					</p:column>
+					<p:column headerText="Marca">
+						<h:outputText value="#{vehi.brand}" />
+					</p:column>
+					<p:column headerText="Color">
+						<h:outputText value="#{vehi.color}" />
+					</p:column>
+					
+				</p:dataTable>
+			</p:dataGrid>
+		</p:panel>
+	</h:form>
+
+</h:body>
+</html>

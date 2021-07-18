@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Disponibilidad de Espacios</title>
+</h:head>
+<h:body>
+	<h:form id="frmSlots">
+		
+		<p:growl id="messages" showDetail="true"></p:growl>
+		<p:panel header="Mantenimiento de espacios">
+			
+			<p:commandButton value="Nuevo Registro" icon="pi pi-check" oncomplete="PF('slotDialog').show()" style="margin-right: .5rem"></p:commandButton>
+			
+			<h4>Espacio disponible = 0 ; Espacio oacupado = 1 (Por defecto los espacios estaran disponibles = 0)</h4>
+			
+			<h:panelGrid id="pnlTabla">
+				<p:dataTable id="slotsTable" var="slot" paginator="true" paginatorPosition="bottom" rows="5" value="#{slotsView.lstSlots}">
+					<p:column headerText="ID">
+						<h:outputText value="#{slot.idSlot}" />
+					</p:column>
+					
+					<p:column headerText="Nombre de espacio">
+						<h:outputText value="#{slot.nameSLot}" />
+					</p:column>
+					<p:column headerText="Estado">
+						<h:outputText value="#{slot.statusSlot}" />
+					</p:column>
+					
+					<p:column>
+
+						<p:commandButton class="ui-button-raised ui-button-danger rounded-button" style="margin-left:10px" icon="pi pi-trash" process="@this" oncomplete="PF('deleteSlotDialog').show()">
+							<f:setPropertyActionListener value="#{slot}"	target="#{slotsView.selectedSlot}" />
+						</p:commandButton>
+
+					</p:column>
+					
+				</p:dataTable>
+			
+			</h:panelGrid>
+		
+		</p:panel>
+		
+		<p:dialog header="Nueva Espacio" showEffect="fade" modal="true" widgetVar="slotDialog" responsive="true">
+
+			<h:panelGrid id="datosEspacios" columns="2">
+				
+				<p:outputLabel value="Nomenclatura de espacio: " />
+				<p:inputText value="#{slotsView.nameSLot}" />
+				<p:outputLabel value="Espacio disponible: " />
+				<p:outputLabel value="#{slotsView.statusSlot}"/>
+					
+				
+				
+
+			</h:panelGrid>
+
+
+			<f:facet name="footer">
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmSlots:datosEspacios" actionListener="#{slotsView.saveSlot}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times"
+					onclick="PF('slotDialog').hide()" class="ui-button-secondary" />
+			</f:facet>
+
+		</p:dialog>
+		
+			
+	</h:form>
+	
+
+
+</h:body>
+</html>
