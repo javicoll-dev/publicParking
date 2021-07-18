@@ -21,5 +21,7 @@ public interface SlotsController {
 	public List<Slots> listSlotsTQ(); // listar con type query
 	
 	public Slots getById(int id);
+	
+	public List<Slots> getSlotsByStatus(int status); //devuelve una lista de slots cuando envio un parametro para la consulta 	
 
 }

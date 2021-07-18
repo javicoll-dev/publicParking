@@ -21,13 +21,17 @@ public class Slots implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static final int AVAILABLE_SLOT = 0;//nomenclatura de slots disponibles
 
+	public static final int NOT_AVAILABLE_SLOT = 1;//nomenclatura de slots NO disponibles
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idSlot;
 	private String nameSLot;
 	private int statusSlot;
+	
 	
 	
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "fkIdSlot")

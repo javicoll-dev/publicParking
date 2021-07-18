@@ -69,6 +69,14 @@
 
 		</p:dialog>
 		
+		
+		<p:confirmDialog widgetVar="deleteSlotDialog" showEffect="fade"	width="300" message="Desea eliminar el registro?"	header="Confirmación" severity="warn">
+			<p:commandButton value="Aceptar" icon="pi pi-check"	actionListener="#{slotsView.deleteSlot}" process="@this"	oncomplete="PF('deleteSlotDialog').hide()" />
+			<p:commandButton value="Cancelar" type="button"	styleClass="ui-button-secondary" icon="pi pi-times"	onclick="PF('deleteSlotDialog').hide()" />
+		</p:confirmDialog>
+
+
+		<p:confirmDialog global="true" showEffect="fade" width="300" />
 			
 	</h:form>
 	

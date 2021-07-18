@@ -31,7 +31,11 @@ public class RegisterParking implements Serializable{
 	
 	private Timestamp timeStart;
 	
-	private Timestamp timeEnd;	
+	private Timestamp timeEnd;
+	
+	private Float totalRate;
+	
+	//private int statusRegParking;
 		
 	
 	//@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -45,6 +49,18 @@ public class RegisterParking implements Serializable{
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "fkIdSlot")
 	private Slots fkIdSlot;
+
+
+	
+	
+	public Float getTotalRate() {
+		return totalRate;
+	}
+
+
+	public void setTotalRate(Float totalRate) {
+		this.totalRate = totalRate;
+	}
 
 
 	public int getIdRegisterParking() {
@@ -111,13 +127,9 @@ public class RegisterParking implements Serializable{
 	@Override
 	public String toString() {
 		return "RegisterParking [idRegisterParking=" + idRegisterParking + ", timeStart=" + timeStart + ", timeEnd="
-				+ timeEnd + ", fkVehicle=" + fkVehicle + ", fkIdSlot=" + fkIdSlot + "]";
+				+ timeEnd + ", totalRate=" + totalRate + ", fkVehicle=" + fkVehicle + ", fkIdSlot=" + fkIdSlot + "]";
 	}
 
 
-	
-
-	
-	
-		
+			
 }

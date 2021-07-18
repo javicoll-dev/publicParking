@@ -92,4 +92,11 @@ public class SlotsDaoImpl extends GenericaDaoImpl<Slots> implements SlotsDao{
 		return this.entityManager.find(Slots.class, id);
 	}
 
+	@Override
+	public List<Slots> getSlotsByStatus(int status) {
+
+		TypedQuery<Slots> consulta = this.entityManager.createQuery("Select s from Slots s where s.statusSlot = :status order by s.idSlot", Slots.class);
+		return consulta.setParameter("status", status).getResultList();
+	}
+
 }

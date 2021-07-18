@@ -32,6 +32,11 @@
 						<h:outputText value="#{reg.fkVehicle.number}" />
 															
 					</p:column>
+					
+					<p:column headerText="Espacio">
+						<h:outputText value="#{reg.fkIdSlot.nameSLot}" />
+															
+					</p:column>
 
 					
 					<p:column headerText="Hora de ingreso">
@@ -40,18 +45,18 @@
 
 						</h:outputText>
 					</p:column>
-					<p:column headerText="Hora de salida">
-						<h:outputText value="#{reg.timeEnd}">
-							<f:convertDateTime pattern="HH:mm:ss" />
-						</h:outputText>
-					</p:column>
-
+					
+					
 					<p:column>
-					<p:commandButton icon="pi pi-pencil" update="frmRegistros:allRegisters" action="#{registerParkingView.updateRegister}">
-						<f:setPropertyActionListener value="#{reg}" target="#{registerParkingView.selectedRegister}" />
+						
+						<p:commandButton icon="pi pi-pencil" update="frmRegistros:datosSalida" action="#{registerParkingView.calculateRate}"	oncomplete="PF('registerUpdateDialog').show()" styleClass="edit-button rounded-button">
+							<f:setPropertyActionListener value="#{reg}" target="#{registerParkingView.selectedRegister}" />
 
-					</p:commandButton>
+						</p:commandButton>
+						
 					</p:column>
+					
+					
 
 				</p:dataTable>
 			</h:panelGrid>
@@ -66,7 +71,7 @@
 						
 						<p:outputLabel value="Tipo de Vehiculo: " />
 						<p:selectOneMenu id="option"
-							value="#{registerParkingView.idVehicleType}">
+							value="#{registerParkingView.idVehicleTypeView}">
 							<f:selectItem itemLabel="Seleccionar Tipo" itemValue="" />
 							<f:selectItems var="seleccion"
 								value="#{vehicleTypeView.lstVehicleType}"
@@ -87,7 +92,7 @@
 							value="#{registerParkingView.idSlots}">
 							<f:selectItem itemLabel="Seleccionar Espacio" itemValue="" />
 							<f:selectItems var="seleccionS"
-								value="#{slotsView.lstSlots}"
+								value="#{registerParkingView.lstSlots}"
 								itemLabel="#{seleccionS.nameSLot}"
 								itemValue="#{seleccionS.idSlot}" />
 						</p:selectOneMenu>
@@ -104,7 +109,66 @@
 		</p:dialog>
 			
 			
-
+		<p:dialog header="Registro de salida" showEffect="fade" modal="true" widgetVar="registerUpdateDialog" responsive="true">
+			
+			
+			<h:panelGrid id="datosSalida" columns="2">
+				
+				<p:column>
+				<p:outputLabel value="Placa: " />
+				<br></br>
+				<p:outputLabel value="Tipo de Vehiculo: " />
+				<br></br>
+				<p:outputLabel value="Precio por hora: " />
+				<br></br>
+				<p:outputLabel value="Hora de ingreso: " />
+				<br></br>
+				<p:outputLabel value="Hora de salida: " />
+				<br></br>
+				<p:outputLabel value="Total a pagar: " />
+				<br></br>
+				</p:column>
+				
+								
+				<p:column>
+				<p:outputLabel value="#{registerParkingView.selectedRegister.fkVehicle.number}" />
+				
+				<br></br>
+				
+				<p:outputLabel value="#{registerParkingView.selectedRegister.fkVehicle.fkVehicleT.vehicleType}">
+							
+				</p:outputLabel>
+				
+				<br></br>
+				
+				<p:outputLabel value="#{registerParkingView.selectedRegister.fkVehicle.fkVehicleT.fkRateHour.priceHour}">
+							
+				</p:outputLabel>
+				
+				<br></br>
+				
+				<p:outputLabel value="#{registerParkingView.selectedRegister.timeStart}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+				</p:outputLabel>
+				
+				<br></br>
+				<p:outputLabel value="#{registerParkingView.selectedRegister.timeEnd}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+				</p:outputLabel>
+				
+				<br></br>
+				<p:outputLabel value="#{registerParkingView.selectedRegister.totalRate}"/>
+						
+				</p:column>
+				
+			</h:panelGrid>
+			
+			<f:facet name="footer">
+				<p:commandButton value="Pagar" icon="pi pi-save" update="frmRegistros:datosSalida, allRegisters" actionListener="#{registerParkingView.updateRegister}" />
+				<p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('registerUpdateDialog').hide()"	class="ui-button-secondary" />
+			</f:facet>
+			
+		</p:dialog>
 			
 
 		

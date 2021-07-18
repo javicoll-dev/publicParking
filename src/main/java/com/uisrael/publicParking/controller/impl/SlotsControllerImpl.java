@@ -59,4 +59,10 @@ public class SlotsControllerImpl implements SlotsController{
 		return slotDao.getById(id);
 	}
 
+	@Override
+	public List<Slots> getSlotsByStatus(int status) {
+		
+		return slotDao.getSlotsByStatus(status);
+	}
+
 }

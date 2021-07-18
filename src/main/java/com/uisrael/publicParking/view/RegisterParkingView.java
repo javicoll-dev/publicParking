@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
-
+import org.primefaces.PrimeFaces;
 
 import com.uisrael.publicParking.controller.RegisterParkingController;
 import com.uisrael.publicParking.controller.SlotsController;
@@ -56,7 +58,7 @@ public class RegisterParkingView implements Serializable{
 	
 	
 	//para guardar datos del tipo vehiculo
-	private String idVehicleType = "";
+	private String idVehicleTypeView = "";
 	
 	private VehicleTypeController vehicleTypeController;
 	
@@ -112,10 +114,12 @@ public class RegisterParkingView implements Serializable{
 	
 	public void listarSlots() {
 		
-		lstSlots = slotsController.listSlotsTQ();
+		lstSlots = slotsController.getSlotsByStatus(Slots.AVAILABLE_SLOT);
 	}
 	
 	public void saveRegister() {
+		
+	
 		
 		//guaradar datos del vehiculo
 		newVehicle = new Vehicle();
@@ -124,27 +128,33 @@ public class RegisterParkingView implements Serializable{
 		newVehicle.setColor(color);
 		
 		//obtener el ID del tipo de vehiculo
-		VehicleType vehicleTypeId = vehicleTypeController.getVehicleTypeById(Integer.parseInt(idVehicleType));
+		VehicleType vehicleTypeId = vehicleTypeController.getVehicleTypeById(Integer.parseInt(idVehicleTypeView));
 		newVehicle.setFkVehicleT(vehicleTypeId);
 		newVehicle = vehicleController.createVehicle(newVehicle);
 		
 		//guardar datos del registro
 		newRegister = new RegisterParking();
 		//obtener el ID del Slot
-				Slots slotId = slotsController.getById(Integer.parseInt(idSlots));
+		Slots slotId = slotsController.getById(Integer.parseInt(idSlots));
 				
 		//obtener el ID del vehiculo
-		Vehicle vehicleId = vehicleController.getVehicleById(Integer.parseInt(idVehicle));
-		
+		//Vehicle vehicleId = vehicleController.getVehicleById(Integer.parseInt(idVehicle));
+		slotId.setStatusSlot(Slots.NOT_AVAILABLE_SLOT);
+		slotsController.modifySlot(slotId);
+				
 		newRegister.setFkIdSlot(slotId);
-		newRegister.setFkVehicle(vehicleId);
+		newRegister.setFkVehicle(newVehicle);
 		newRegister.setTimeStart(new Timestamp(System.currentTimeMillis()));
-
+		
 		registerParkingController.createRegister(newRegister);
 		
-		listRegister();
-		clearFields() ;
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Registro Añadido"));
+		PrimeFaces.current().executeScript("PF('registerDialog').hide()");
 		
+		listRegister();
+		listarSlots();
+		clearFields() ;
+		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages");		
 		
 		
 	}
@@ -156,7 +166,7 @@ public class RegisterParkingView implements Serializable{
 	
 	public void clearFields() {
 		
-		setIdVehicleType (null);
+		setIdVehicleTypeView (null);
 		setNumber (null);
 		setBrand (null);
 		setColor (null);
@@ -167,14 +177,44 @@ public class RegisterParkingView implements Serializable{
 	
 	public void updateRegister() {
 		
-		selectedRegister.setTimeEnd(new Timestamp(System.currentTimeMillis()));
 		
 		registerParkingController.modifyRegister(selectedRegister);
-		listRegister();
 		
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Registro de pago"));
+		PrimeFaces.current().executeScript("PF('registerUpdateDialog').hide()");
+		
+		selectedRegister.getFkIdSlot().setStatusSlot(Slots.AVAILABLE_SLOT);
+		slotsController.modifySlot(selectedRegister.getFkIdSlot());
+		
+		listRegister();
+		listarSlots();
+		listarVehiculos();
+		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages");
 	}
 	
-	
+	public void calculateRate() {
+		
+		selectedRegister.setTimeEnd(new Timestamp(System.currentTimeMillis()));
+		Timestamp startDate;
+		Timestamp endDate;
+		long differenceDate;
+		int hours;
+		int minutes;
+		
+		startDate = selectedRegister.getTimeStart();
+		endDate = selectedRegister.getTimeEnd();
+		
+		differenceDate = endDate.getTime() - startDate.getTime();
+		hours = (int) differenceDate/(3600*1000);
+		minutes = ((int) differenceDate/1000) % (3600/60);
+		
+		if(minutes > 0) {
+			hours +=1;
+			
+		}
+		selectedRegister.setTotalRate((float)hours*selectedRegister.getFkVehicle().getFkVehicleT().getFkRateHour().getPriceHour());
+		
+	}
 
 	public String getIdVehicle() {
 		return idVehicle;
@@ -232,12 +272,12 @@ public class RegisterParkingView implements Serializable{
 		this.lstRegister = lstRegister;
 	}
 
-	public String getIdVehicleType() {
-		return idVehicleType;
+	public String getIdVehicleTypeView() {
+		return idVehicleTypeView;
 	}
 
-	public void setIdVehicleType(String idVehicleType) {
-		this.idVehicleType = idVehicleType;
+	public void setIdVehicleTypeView(String idVehicleType) {
+		this.idVehicleTypeView = idVehicleType;
 	}
 
 	public VehicleTypeController getVehicleTypeController() {
