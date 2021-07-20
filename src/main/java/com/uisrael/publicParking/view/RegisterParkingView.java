@@ -2,8 +2,8 @@ package com.uisrael.publicParking.view;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 
@@ -14,19 +14,16 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import com.uisrael.publicParking.controller.RegisterParkingController;
 import com.uisrael.publicParking.controller.SlotsController;
 import com.uisrael.publicParking.controller.VehicleController;
 import com.uisrael.publicParking.controller.VehicleTypeController;
-
-
 import com.uisrael.publicParking.controller.impl.RegisterParkingControllerImpl;
 import com.uisrael.publicParking.controller.impl.SlotsControllerImpl;
 import com.uisrael.publicParking.controller.impl.VehicleControllerImpl;
 import com.uisrael.publicParking.controller.impl.VehicleTypeControllerImpl;
-
-
 import com.uisrael.publicParking.model.entities.RegisterParking;
 import com.uisrael.publicParking.model.entities.Slots;
 import com.uisrael.publicParking.model.entities.Vehicle;
@@ -55,6 +52,9 @@ public class RegisterParkingView implements Serializable{
 	
 	private RegisterParkingController registerParkingController;
 	private List<RegisterParking> lstRegister;
+	private List<RegisterParking> lstRegisterHistory;
+	private float totalRecaudado=0;
+	
 	
 	
 	//para guardar datos del tipo vehiculo
@@ -78,13 +78,18 @@ public class RegisterParkingView implements Serializable{
 	private SlotsController slotsController;
 	private List<Slots> lstSlots;
 	
-	
+	private String time;
 	
 	public RegisterParkingView() {}
 	
 	@PostConstruct
 	public void init() {
 		
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+        Date now = new Date();
+        time = sdfDate.format(now);
+		
+        
 		
 		slotsController = new SlotsControllerImpl();
 		
@@ -104,12 +109,37 @@ public class RegisterParkingView implements Serializable{
 		
 		listRegister();
 		
+		listarRegisterHistory();
+		
+		
+	}
+	
+	public void getTotalRecaudadoPorDia() {
+		
+		totalRecaudado = 0;
+		//totalRecaudado = registerParkingController.getTotalOfDayTQ(RegisterParking.AVAILABLE_REG, new Date());
+		for (RegisterParking registerParking : lstRegisterHistory) {
+			totalRecaudado += registerParking.getTotalRate();
+		}
+		
 	}
 	
 	public void listarVehiculos() {
 		
 		lstVehicle = vehicleController.listVehicleTQ();
 		
+	}
+	
+	public void listRegister() {
+		
+		lstRegister = registerParkingController.listRegisterTQ(RegisterParking.NOT_AVAILABLE_REG);
+	}
+	
+	public void listarRegisterHistory() {
+		
+		
+		lstRegisterHistory = registerParkingController.listRegisterHistoryTQ(RegisterParking.AVAILABLE_REG, new Date());
+		getTotalRecaudadoPorDia();
 	}
 	
 	public void listarSlots() {
@@ -144,6 +174,7 @@ public class RegisterParkingView implements Serializable{
 				
 		newRegister.setFkIdSlot(slotId);
 		newRegister.setFkVehicle(newVehicle);
+		newRegister.setStatusRegParking(RegisterParking.NOT_AVAILABLE_REG);
 		newRegister.setTimeStart(new Timestamp(System.currentTimeMillis()));
 		
 		registerParkingController.createRegister(newRegister);
@@ -153,16 +184,14 @@ public class RegisterParkingView implements Serializable{
 		
 		listRegister();
 		listarSlots();
-		clearFields() ;
-		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages");		
+		clearFields();
+		
+		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages", "frmRegistros:historyReg", "frmRegistros:datosRegistro", "frmRegistros:datosSalida", "frmRegistros:pnlTotal");	
 		
 		
 	}
 
-	public void listRegister() {
-		
-		lstRegister = registerParkingController.listRegisterTQ();
-	}
+	
 	
 	public void clearFields() {
 		
@@ -177,19 +206,31 @@ public class RegisterParkingView implements Serializable{
 	
 	public void updateRegister() {
 		
-		
+		selectedRegister.setStatusRegParking(RegisterParking.AVAILABLE_REG);
 		registerParkingController.modifyRegister(selectedRegister);
 		
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Registro de pago"));
+		
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Registro de Salida"));
 		PrimeFaces.current().executeScript("PF('registerUpdateDialog').hide()");
+		//PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages", "frmRegistros:historyReg");
+		
 		
 		selectedRegister.getFkIdSlot().setStatusSlot(Slots.AVAILABLE_SLOT);
 		slotsController.modifySlot(selectedRegister.getFkIdSlot());
 		
+		DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("frmRegistros:allRegisters");
+		dataTable.reset();
+			
+		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages", "frmRegistros:historyReg", "frmRegistros:datosRegistro", "frmRegistros:datosSalida", "frmRegistros:pnlTotal");	
+
+		
+		
 		listRegister();
 		listarSlots();
 		listarVehiculos();
-		PrimeFaces.current().ajax().update("frmRegistros:allRegisters","frmRegistros:messages");
+		listarRegisterHistory();
+		
+		
 	}
 	
 	public void calculateRate() {
@@ -214,6 +255,34 @@ public class RegisterParkingView implements Serializable{
 		}
 		selectedRegister.setTotalRate((float)hours*selectedRegister.getFkVehicle().getFkVehicleT().getFkRateHour().getPriceHour());
 		
+	}
+	
+	
+
+	
+
+	public float getTotalRecaudado() {
+		return totalRecaudado;
+	}
+
+	public void setTotalRecaudado(float totalRecaudado) {
+		this.totalRecaudado = totalRecaudado;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public List<RegisterParking> getLstRegisterHistory() {
+		return lstRegisterHistory;
+	}
+
+	public void setLstRegisterHistory(List<RegisterParking> lstRegisterHistory) {
+		this.lstRegisterHistory = lstRegisterHistory;
 	}
 
 	public String getIdVehicle() {
@@ -352,61 +421,7 @@ public class RegisterParkingView implements Serializable{
 		this.lstVehicle = lstVehicle;
 	}
 
-	/*public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getIdentification() {
-		return identification;
-	}
-
-	public void setIdentification(String identification) {
-		this.identification = identification;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public Client getNewClient() {
-		return newClient;
-	}
-
-	public void setNewClient(Client newClient) {
-		this.newClient = newClient;
-	}
-
-	public ClientController getClientController() {
-		return clientController;
-	}
-
-	public void setClientController(ClientController clientController) {
-		this.clientController = clientController;
-	}
-
-	public List<Client> getLstClient() {
-		return lstClient;
-	}
-
-	public void setLstClient(List<Client> lstClient) {
-		this.lstClient = lstClient;
-	}*/
+	
 
 	public Timestamp getTimeEnd() {
 		return timeEnd;

@@ -1,7 +1,9 @@
 package com.uisrael.publicParking.model.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -81,9 +83,9 @@ public class RegisterParkingDaoImpl extends GenericaDaoImpl<RegisterParking> imp
 	}
 
 	@Override
-	public List<RegisterParking> listRegisterTQ() {
-		TypedQuery<RegisterParking> consulta = this.entityManager.createQuery("Select r from RegisterParking r order by r.idRegisterParking", RegisterParking.class);
-		return consulta.getResultList();
+	public List<RegisterParking> listRegisterTQ(int statusR) {
+		TypedQuery<RegisterParking> consulta = this.entityManager.createQuery("Select r from RegisterParking r where r.statusRegParking = :statusR order by r.idRegisterParking", RegisterParking.class);
+		return consulta.setParameter("statusR", statusR).getResultList();
 	}
 
 	@Override
@@ -91,6 +93,49 @@ public class RegisterParkingDaoImpl extends GenericaDaoImpl<RegisterParking> imp
 		
 		TypedQuery<RegisterParking> consulta = this.entityManager.createQuery("Select r from RegisterParking r where r.registerDate = '" + registerDate+ " ' ", RegisterParking.class);
 		return consulta.getResultList();
+	}
+
+	@Override
+	public List<RegisterParking> listRegisterHistoryTQ(int statusP, Date end) {
+
+		
+        Date date1 = (Date) end.clone();//se crea una copia del valor recibido en la variable end(fecha) y le asigno a la variable date1
+        
+        date1.setHours(0);
+        date1.setMinutes(0);
+        date1.setSeconds(0);
+
+        Date date2 = (Date) end.clone();
+        
+        date2.setHours(23);
+        date2.setMinutes(59);
+        date2.setSeconds(59);
+
+        
+		TypedQuery<RegisterParking> consulta = this.entityManager.createQuery("Select r from RegisterParking r where r.statusRegParking = :statusP and  r.timeEnd between :date1 and :date2 order by r.idRegisterParking", RegisterParking.class);
+		
+		return consulta.setParameter("statusP", statusP).setParameter("date1", date1).setParameter("date2", date2).getResultList();
+	}
+
+	@Override
+	public float getTotalOfDayTQ(int statusP, Date end) {
+	
+		 Date date1 = (Date) end.clone();//se crea una copia del valor recibido en la variable end(fecha) y le asigno a la variable date1
+	        
+	        date1.setHours(0);
+	        date1.setMinutes(0);
+	        date1.setSeconds(0);
+
+	        Date date2 = (Date) end.clone();
+	        
+	        date2.setHours(23);
+	        date2.setMinutes(59);
+	        date2.setSeconds(59);
+
+	        
+			Query consulta = this.entityManager.createQuery("Select sum(r.totalRate) from RegisterParking r where r.statusRegParking = :statusP and  r.timeEnd between :date1 and :date2 ");
+			
+			return (float) consulta.setParameter("statusP", statusP).setParameter("date1", date1).setParameter("date2", date2).getSingleResult();
 	}
 
 }

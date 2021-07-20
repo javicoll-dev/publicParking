@@ -15,9 +15,20 @@
 <h:body>
 	<h:form id="frmRegistros">
 		<p:growl id="messages" showDetail="true"></p:growl>
-		<p:panel header="Registro de Estacionamiento">
+		<p:panel header="Registro de Estacionamiento" >
+			
+			<p:outputPanel styleClass="p-mb-3">
+            	<p:autoUpdate/>
+					FECHA: #{registerParkingView.time}
+					
+        	</p:outputPanel>
+        	
+        	
+			<br></br>
+			
 			<p:commandButton value="Agregar Registro" icon="pi pi-check" oncomplete="PF('registerDialog').show()" style="margin-right: .5rem"></p:commandButton>
 			
+			<br></br>
 			<br></br>
 			<h:panelGrid id="pnlRegisters">
 				<p:dataTable id="allRegisters" var="reg" paginator="true"
@@ -28,8 +39,8 @@
 						<h:outputText value="#{reg.idRegisterParking}" />
 					</p:column>
 
-					<p:column headerText="Placa">
-						<h:outputText value="#{reg.fkVehicle.number}" />
+					<p:column headerText="Placa" filterBy="#{reg.fkVehicle.number}" >
+						<h:outputText value="#{reg.fkVehicle.number}"/>
 															
 					</p:column>
 					
@@ -49,7 +60,7 @@
 					
 					<p:column>
 						
-						<p:commandButton icon="pi pi-pencil" update="frmRegistros:datosSalida" action="#{registerParkingView.calculateRate}"	oncomplete="PF('registerUpdateDialog').show()" styleClass="edit-button rounded-button">
+						<p:commandButton icon="pi pi-pencil" update="frmRegistros:datosSalida, frmRegistros:allRegisters, frmRegistros:historyReg, frmRegistros:datosRegistro, frmRegistros:pnlTotal" action="#{registerParkingView.calculateRate}"	oncomplete="PF('registerUpdateDialog').show()" styleClass="edit-button rounded-button">
 							<f:setPropertyActionListener value="#{reg}" target="#{registerParkingView.selectedRegister}" />
 
 						</p:commandButton>
@@ -62,6 +73,53 @@
 			</h:panelGrid>
 		</p:panel>
 		
+		<p:panel header="Registro del dia">
+			<h:panelGrid id="pnlTotal" columns="2">
+				<p:outputLabel value="Total recaudado :  "/>
+				<p:outputLabel value="#{registerParkingView.totalRecaudado}"/>	
+				
+		</h:panelGrid>
+			<br></br>
+			
+			<h:panelGrid id="pnlHistory">
+				<p:dataTable id="historyReg" var="regH" paginator="true" paginatorPosition="bottom" rows="5" value="#{registerParkingView.lstRegisterHistory}">
+					
+					<p:column headerText="Id registro">
+						<h:outputText value="#{regH.idRegisterParking}" />
+					</p:column>
+
+					<p:column headerText="Placa">
+						<h:outputText value="#{regH.fkVehicle.number}" />															
+					</p:column>
+					
+					<p:column headerText="Espacio">
+						<h:outputText value="#{regH.fkIdSlot.nameSLot}" />															
+					</p:column>
+
+					
+					<p:column headerText="Hora de ingreso">
+						<h:outputText value="#{regH.timeStart}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Hora de salida">
+						<h:outputText value="#{regH.timeEnd}">
+							<f:convertDateTime pattern="HH:mm:ss" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Total Pagado">
+						<h:outputText value="#{regH.totalRate}"/>
+					</p:column>
+					
+					
+					
+				</p:dataTable>
+				
+			</h:panelGrid>
+		
+		</p:panel>
 		
 		<p:dialog header="Nuevo registro" showEffect="fade" modal="true" widgetVar="registerDialog" responsive="true">
 
@@ -101,7 +159,7 @@
 
 
 			<f:facet name="footer">
-				<p:commandButton value="Guardar" icon="pi pi-save" update="frmRegistros:datosRegistro, allRegisters" actionListener="#{registerParkingView.saveRegister}" />
+				<p:commandButton value="Guardar" icon="pi pi-save" update="frmRegistros:datosSalida, frmRegistros:allRegisters, frmRegistros:historyReg, frmRegistros:datosRegistro, frmRegistros:pnlTotal" actionListener="#{registerParkingView.saveRegister}" />
 				<p:commandButton value="Cancelar" icon="pi pi-times"
 					onclick="PF('registerDialog').hide()" class="ui-button-secondary" />
 			</f:facet>
@@ -164,7 +222,7 @@
 			</h:panelGrid>
 			
 			<f:facet name="footer">
-				<p:commandButton value="Pagar" icon="pi pi-save" update="frmRegistros:datosSalida, allRegisters" actionListener="#{registerParkingView.updateRegister}" />
+				<p:commandButton value="Pagar" icon="pi pi-save" update="frmRegistros:datosSalida, frmRegistros:allRegisters, frmRegistros:historyReg, frmRegistros:datosRegistro, frmRegistros:pnlTotal" actionListener="#{registerParkingView.updateRegister}" />
 				<p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('registerUpdateDialog').hide()"	class="ui-button-secondary" />
 			</f:facet>
 			

@@ -63,9 +63,11 @@
 
 			<h:panelGrid id="datosTarifa" columns="2">
 				
-				<p:outputLabel value="Precio estacionamiento: " />
-				<p:inputText value="#{rateHourView.priceHour}" />
-				<p:outputLabel value="Fecha: " />
+				<p:outputLabel value="Nuevo precio por hora: " />
+				<p:inputText value="#{rateHourView.priceHour}"/>
+					
+				
+				<p:outputLabel value="Fecha registro de precio: " />
 				<p:datePicker id="button" value="#{rateHourView.daterateHour}" 	showIcon="true" />
 
 			</h:panelGrid>
@@ -111,5 +113,6 @@
 
 
 	</h:form>
+	
 </h:body>
 </html>
