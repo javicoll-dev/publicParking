@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,6 +26,10 @@ public class RegisterParking implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public static final int AVAILABLE_REG = 0;//nomenclatura  pagados
+
+	public static final int NOT_AVAILABLE_REG = 1;//nomenclatura por pagar
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idRegisterParking;
@@ -35,7 +40,8 @@ public class RegisterParking implements Serializable{
 	
 	private Float totalRate;
 	
-	//private int statusRegParking;
+	@Column(name = "statusregparking")
+	private int statusRegParking; 
 		
 	
 	//@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -53,6 +59,16 @@ public class RegisterParking implements Serializable{
 
 	
 	
+	public int getStatusRegParking() {
+		return statusRegParking;
+	}
+
+
+	public void setStatusRegParking(int statusRegParking) {
+		this.statusRegParking = statusRegParking;
+	}
+
+
 	public Float getTotalRate() {
 		return totalRate;
 	}
@@ -127,9 +143,9 @@ public class RegisterParking implements Serializable{
 	@Override
 	public String toString() {
 		return "RegisterParking [idRegisterParking=" + idRegisterParking + ", timeStart=" + timeStart + ", timeEnd="
-				+ timeEnd + ", totalRate=" + totalRate + ", fkVehicle=" + fkVehicle + ", fkIdSlot=" + fkIdSlot + "]";
+				+ timeEnd + ", totalRate=" + totalRate + ", statusRegParking=" + statusRegParking + ", fkVehicle="
+				+ fkVehicle + ", fkIdSlot=" + fkIdSlot + "]";
 	}
 
 
-			
 }

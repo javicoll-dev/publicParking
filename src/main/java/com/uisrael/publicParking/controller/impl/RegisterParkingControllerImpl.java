@@ -1,5 +1,6 @@
 package com.uisrael.publicParking.controller.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Tuple;
@@ -53,15 +54,27 @@ public class RegisterParkingControllerImpl implements RegisterParkingController{
 	}
 
 	@Override
-	public List<RegisterParking> listRegisterTQ() {
+	public List<RegisterParking> listRegisterTQ(int statusR) {
 
-		return registerParkingDao.listRegisterTQ();
+		return registerParkingDao.listRegisterTQ(statusR);
 	}
 
 	@Override
 	public List<RegisterParking> searchRegisterDate(String registerDate) {
 
 		return registerParkingDao.searchRegisterDate(registerDate);
+	}
+
+	@Override
+	public List<RegisterParking> listRegisterHistoryTQ(int statusP, Date end) {
+
+		return registerParkingDao.listRegisterHistoryTQ(statusP, end);
+	}
+
+	@Override
+	public float getTotalOfDayTQ(int statusP, Date end) {
+
+		return registerParkingDao.getTotalOfDayTQ(statusP, end);
 	}
 
 }

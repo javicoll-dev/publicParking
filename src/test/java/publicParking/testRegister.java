@@ -32,12 +32,12 @@ public class testRegister {
 		
 		registerController.createRegister(newRegister);
 		
-		List<RegisterParking> result = registerController.listRegisterTQ();
+		//List<RegisterParking> result = registerController.listRegisterTQ();
 		
-		for(RegisterParking tmp:result) {
+		/*for(RegisterParking tmp:result) {
 			
 			System.out.println("Registros :"+ tmp);
-		}
+		}*/
 	
 	}
 

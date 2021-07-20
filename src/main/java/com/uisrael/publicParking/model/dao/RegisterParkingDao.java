@@ -1,5 +1,6 @@
 package com.uisrael.publicParking.model.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Tuple;
@@ -18,8 +19,12 @@ public interface RegisterParkingDao {
 	
 	public List<Tuple> getDataRegister();
 	
-	public List<RegisterParking> listRegisterTQ();
+	public List<RegisterParking> listRegisterTQ(int statusR);
+	
+	public List<RegisterParking> listRegisterHistoryTQ(int statusP, Date end );
 	
 	public List<RegisterParking> searchRegisterDate(String registerDate);
+	
+	public float getTotalOfDayTQ(int statusP, Date end); 
 	
 }
