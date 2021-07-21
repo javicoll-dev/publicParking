@@ -179,7 +179,11 @@
 				<br></br>
 				<p:outputLabel value="Precio por hora: " />
 				<br></br>
+				<p:outputLabel value="Fecha de ingreso: " />
+				<br></br>
 				<p:outputLabel value="Hora de ingreso: " />
+				<br></br>
+				<p:outputLabel value="Fecha de Salida: " />
 				<br></br>
 				<p:outputLabel value="Hora de salida: " />
 				<br></br>
@@ -206,8 +210,21 @@
 				<br></br>
 				
 				<p:outputLabel value="#{registerParkingView.selectedRegister.timeStart}">
+							<f:convertDateTime pattern="yyy-MM-dd" />
+				</p:outputLabel>
+				
+				<br></br>
+				
+				<p:outputLabel value="#{registerParkingView.selectedRegister.timeStart}">
 							<f:convertDateTime pattern="HH:mm:ss" />
 				</p:outputLabel>
+				
+				<br></br>
+				<p:outputLabel value="#{registerParkingView.selectedRegister.timeEnd}">
+							<f:convertDateTime pattern="yyy-MM-dd" />
+				</p:outputLabel>
+				
+				<br></br>
 				
 				<br></br>
 				<p:outputLabel value="#{registerParkingView.selectedRegister.timeEnd}">

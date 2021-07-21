@@ -246,7 +246,7 @@ public class RegisterParkingView implements Serializable{
 		endDate = selectedRegister.getTimeEnd();
 		
 		differenceDate = endDate.getTime() - startDate.getTime();
-		hours = (int) differenceDate/(3600*1000);
+		hours = (int) differenceDate/(3600*1000); 
 		minutes = ((int) differenceDate/1000) % (3600/60);
 		
 		if(minutes > 0) {
